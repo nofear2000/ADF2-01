@@ -1,0 +1,101 @@
+{
+	"name": "Load Peeps Data Delta",
+	"properties": {
+		"activities": [
+			{
+				"name": "Stage Peeps Data",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate Stage Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource"
+					},
+					"sink": {
+						"type": "SqlSink",
+						"writeBatchSize": 10000
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"columnMappings": {
+							"RecId": "RecId",
+							"FirstName": "FirstName",
+							"LastName": "LastName"
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SQL_ONPREM_dbo_Peeps",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Stage_Peeps",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Truncate Stage Table",
+				"type": "SqlServerStoredProcedure",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_TruncateStagePeeps]"
+				},
+				"linkedServiceName": {
+					"referenceName": "SQLDB_My_Analytic",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Load New Peeps",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Stage Peeps Data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_Load_Peeps]"
+				},
+				"linkedServiceName": {
+					"referenceName": "SQLDB_My_Analytic",
+					"type": "LinkedServiceReference"
+				}
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
