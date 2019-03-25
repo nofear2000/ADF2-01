@@ -1,0 +1,24 @@
+{
+	"name": "Run Once a day",
+	"properties": {
+		"runtimeState": "Stopped",
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2019-03-25T16:28:00.000Z",
+				"endTime": "2019-03-27T17:28:00.000Z",
+				"timeZone": "UTC",
+				"schedule": {
+					"minutes": [
+						0
+					],
+					"hours": [
+						5
+					]
+				}
+			}
+		}
+	}
+}
