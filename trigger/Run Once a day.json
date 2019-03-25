@@ -2,6 +2,14 @@
 	"name": "Run Once a day",
 	"properties": {
 		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Load Peeps Data Delta",
+					"type": "PipelineReference"
+				}
+			}
+		],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
